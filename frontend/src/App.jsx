@@ -13,6 +13,7 @@ import { useAnalysis } from './hooks/useAnalysis';
 export default function App() {
   const [activeTab, setActiveTab] = useState('overview');
   const [gitUrl, setGitUrl] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { data, loading, analyzingStep, error, runAnalysis, runGithubAnalysis } = useAnalysis();
 
   const handleGitSubmit = (e) => {
@@ -98,12 +99,20 @@ export default function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         hasData={!!data}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
+      <div
+        className={`sidebar-backdrop ${sidebarOpen ? 'visible' : ''}`}
+        onClick={() => setSidebarOpen(false)}
+        aria-hidden="true"
       />
       <div className="main-wrapper">
         <Header
           repoName={data?.repository?.name}
           onUpload={runAnalysis}
           loading={loading}
+          onSidebarToggle={() => setSidebarOpen((open) => !open)}
         />
         <main className="content-pane">
           {renderContent()}
