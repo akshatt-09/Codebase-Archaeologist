@@ -43,7 +43,7 @@ export default function App() {
           <form onSubmit={handleGitSubmit} style={{ display: 'flex', gap: '8px', marginTop: '24px' }}>
             <input
               type="url"
-              placeholder="https://github.com/akshatt-09/my-portfolio"
+              placeholder="https://github.com/owner/repository"
               value={gitUrl}
               onChange={(e) => setGitUrl(e.target.value)}
               disabled={loading}
