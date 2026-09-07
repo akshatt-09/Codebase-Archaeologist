@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
-import { Upload, FolderUp, Activity } from 'lucide-react';
+import { Upload, FolderUp, Activity, Menu } from 'lucide-react';
 
-export function Header({ repoName, onUpload, loading }) {
+export function Header({ repoName, onUpload, loading, onSidebarToggle }) {
   const zipInputRef = useRef(null);
   const folderInputRef = useRef(null);
 
@@ -27,13 +27,21 @@ export function Header({ repoName, onUpload, loading }) {
 
   return (
     <header className="top-header">
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div className="header-repo">
+        <button
+          className="mobile-sidebar-toggle"
+          type="button"
+          aria-label="Open sidebar"
+          onClick={onSidebarToggle}
+        >
+          <Menu size={20} />
+        </button>
         <Activity size={18} color="#0ea5e9" />
         <span style={{ fontWeight: 600, color: '#f0f4fc' }}>
           {repoName ? repoName : 'No Repository Selected'}
         </span>
       </div>
-      <div style={{ display: 'flex', gap: '10px' }}>
+      <div className="header-actions">
         <input
           type="file"
           ref={zipInputRef}
