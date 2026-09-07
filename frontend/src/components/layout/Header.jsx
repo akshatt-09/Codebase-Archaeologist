@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Upload, FolderUp, Activity, Menu } from 'lucide-react';
 
-export function Header({ repoName, onUpload, loading }) {
+export function Header({ repoName, onUpload, loading, onSidebarToggle }) {
   const zipInputRef = useRef(null);
   const folderInputRef = useRef(null);
 
@@ -32,7 +32,7 @@ export function Header({ repoName, onUpload, loading }) {
           className="mobile-sidebar-toggle"
           type="button"
           aria-label="Open sidebar"
-          onClick={() => window.dispatchEvent(new CustomEvent('open-sidebar'))}
+          onClick={onSidebarToggle}
         >
           <Menu size={20} />
         </button>
