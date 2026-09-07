@@ -1,10 +1,11 @@
 import React from 'react';
-import { 
-  LayoutDashboard, Network, GitBranch, Layers, 
-  HeartPulse, GitCommit, Search, ShieldCheck, X
+import {
+  LayoutDashboard, Network, GitBranch, Layers,
+  HeartPulse, GitCommit, Search, ShieldCheck, X,
+  PanelLeftClose, PanelLeftOpen
 } from 'lucide-react';
 
-export function Sidebar({ activeTab, setActiveTab, hasData, isOpen, isCollapsed, onClose }) {
+export function Sidebar({ activeTab, setActiveTab, hasData, isOpen, isCollapsed, onClose, onToggleCollapse }) {
   const navs = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'architecture', label: 'Architecture', icon: Layers },
@@ -35,7 +36,18 @@ export function Sidebar({ activeTab, setActiveTab, hasData, isOpen, isCollapsed,
         </button>
       </div>
       <nav className="sidebar-nav">
-        <div className="nav-section-title">ANALYSIS</div>
+        <div className="nav-section-header">
+          <span className="nav-section-title">ANALYSIS</span>
+          <button
+            className="sidebar-collapse-toggle"
+            type="button"
+            aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            onClick={onToggleCollapse}
+          >
+            {isCollapsed ? <PanelLeftOpen size={19} /> : <PanelLeftClose size={19} />}
+          </button>
+        </div>
         {navs.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
