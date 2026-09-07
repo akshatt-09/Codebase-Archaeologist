@@ -36,13 +36,13 @@ export default function App() {
 
     if (!data) {
       return (
-        <div className="empty-state" style={{ maxWidth: '520px', margin: '60px auto', textAlign: 'center' }}>
-          <h2>Explore Any Repository</h2>
-          <p style={{ marginTop: '8px', color: '#94a3b8' }}>
-            Enter a public GitHub link or upload a local folder/ZIP via the top header.
+        <div className="empty-state" style={{ maxWidth: '520px', margin: '0 auto', textAlign: 'center', justifyContent: 'flex-start', paddingTop: 'clamp(48px, 10vh, 96px)' }}>
+          <h2 style={{ marginTop: 0 }}>Analyze a Codebase</h2>
+          <p style={{ marginTop: '10px', color: '#94a3b8', maxWidth: '500px' }}>
+            Explore any public GitHub repository or upload your project to understand its architecture, dependencies, and code health.
           </p>
 
-          <form onSubmit={handleGitSubmit} style={{ display: 'flex', gap: '8px', marginTop: '24px' }}>
+          <form onSubmit={handleGitSubmit} style={{ display: 'flex', gap: '8px', marginTop: '24px', width: '100%' }}>
             <input
               type="url"
               placeholder="https://github.com/owner/repository"
@@ -51,6 +51,7 @@ export default function App() {
               disabled={loading}
               style={{
                 flex: 1,
+                minWidth: 0,
                 padding: '10px 14px',
                 borderRadius: '8px',
                 border: '1px solid #334155',
