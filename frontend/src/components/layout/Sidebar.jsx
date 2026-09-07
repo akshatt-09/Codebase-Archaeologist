@@ -1,10 +1,10 @@
 import React from 'react';
 import { 
   LayoutDashboard, Network, GitBranch, Layers, 
-  HeartPulse, GitCommit, Search, ShieldCheck, X 
+  HeartPulse, GitCommit, Search, ShieldCheck, X
 } from 'lucide-react';
 
-export function Sidebar({ activeTab, setActiveTab, hasData, isOpen, onClose }) {
+export function Sidebar({ activeTab, setActiveTab, hasData, isOpen, isCollapsed, onClose }) {
   const navs = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'architecture', label: 'Architecture', icon: Layers },
@@ -21,7 +21,7 @@ export function Sidebar({ activeTab, setActiveTab, hasData, isOpen, onClose }) {
   };
 
   return (
-    <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+    <aside className={`sidebar ${isOpen ? 'open' : ''} ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-header">
         <ShieldCheck size={20} color="#0ea5e9" />
         <span>ARCHAEOLOGIST</span>
@@ -45,9 +45,10 @@ export function Sidebar({ activeTab, setActiveTab, hasData, isOpen, onClose }) {
               className={`nav-item ${isActive ? 'active' : ''}`}
               disabled={!hasData && item.id !== 'overview'}
               onClick={() => handleNavigation(item.id)}
+              title={isCollapsed ? item.label : undefined}
             >
               <Icon size={16} />
-              {item.label}
+              <span className="nav-label">{item.label}</span>
             </button>
           );
         })}
