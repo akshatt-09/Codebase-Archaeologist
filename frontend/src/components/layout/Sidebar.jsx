@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   LayoutDashboard, Network, GitBranch, Layers,
-  HeartPulse, GitCommit, Search, ShieldCheck, X,
+  HeartPulse, GitCommit, Search, X,
   PanelLeftClose, PanelLeftOpen
 } from 'lucide-react';
 
@@ -24,7 +24,7 @@ export function Sidebar({ activeTab, setActiveTab, hasData, isOpen, isCollapsed,
   return (
     <aside className={`sidebar ${isOpen ? 'open' : ''} ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-header">
-        <ShieldCheck size={20} color="#0ea5e9" />
+        <img src="/logo.png" alt="Archaeologist" className="sidebar-logo" />
         <span>ARCHAEOLOGIST</span>
         <button
           className="sidebar-close"
