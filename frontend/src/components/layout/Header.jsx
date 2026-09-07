@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
-import { Upload, FolderUp, Activity, Menu } from 'lucide-react';
+import { Upload, FolderUp, Activity, Menu, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 
-export function Header({ repoName, onUpload, loading, onSidebarToggle }) {
+export function Header({ repoName, onUpload, loading, onSidebarToggle, sidebarCollapsed }) {
   const zipInputRef = useRef(null);
   const folderInputRef = useRef(null);
 
@@ -29,12 +29,16 @@ export function Header({ repoName, onUpload, loading, onSidebarToggle }) {
     <header className="top-header">
       <div className="header-repo">
         <button
-          className="mobile-sidebar-toggle"
+          className="sidebar-toggle"
           type="button"
-          aria-label="Open sidebar"
+          aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           onClick={onSidebarToggle}
         >
-          <Menu size={20} />
+          <span className="desktop-toggle-icon">
+            {sidebarCollapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
+          </span>
+          <span className="mobile-toggle-icon"><Menu size={20} /></span>
         </button>
         <Activity size={18} color="#0ea5e9" />
         <span style={{ fontWeight: 600, color: '#f0f4fc' }}>
