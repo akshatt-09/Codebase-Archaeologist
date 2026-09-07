@@ -115,6 +115,7 @@ export default function App() {
           repoName={data?.repository?.name}
           onUpload={runAnalysis}
           loading={loading}
+          onSidebarToggle={() => setSidebarOpen((open) => !open)}
         />
         <main className="content-pane">
           {renderContent()}
