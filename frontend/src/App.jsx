@@ -17,14 +17,6 @@ export default function App() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { data, loading, analyzingStep, error, runAnalysis, runGithubAnalysis } = useAnalysis();
 
-  const handleSidebarToggle = () => {
-    if (window.innerWidth <= 768) {
-      setSidebarOpen((open) => !open);
-    } else {
-      setSidebarCollapsed((collapsed) => !collapsed);
-    }
-  };
-
   const handleGitSubmit = (e) => {
     e.preventDefault();
     if (gitUrl.trim() && runGithubAnalysis) {
@@ -111,6 +103,7 @@ export default function App() {
         isOpen={sidebarOpen}
         isCollapsed={sidebarCollapsed}
         onClose={() => setSidebarOpen(false)}
+        onToggleCollapse={() => setSidebarCollapsed((collapsed) => !collapsed)}
       />
       <div
         className={`sidebar-backdrop ${sidebarOpen ? 'visible' : ''}`}
@@ -122,8 +115,6 @@ export default function App() {
           repoName={data?.repository?.name}
           onUpload={runAnalysis}
           loading={loading}
-          onSidebarToggle={handleSidebarToggle}
-          sidebarCollapsed={sidebarCollapsed}
         />
         <main className="content-pane">
           {renderContent()}
