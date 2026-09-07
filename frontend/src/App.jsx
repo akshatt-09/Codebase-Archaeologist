@@ -14,7 +14,16 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('overview');
   const [gitUrl, setGitUrl] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { data, loading, analyzingStep, error, runAnalysis, runGithubAnalysis } = useAnalysis();
+
+  const handleSidebarToggle = () => {
+    if (window.innerWidth <= 768) {
+      setSidebarOpen((open) => !open);
+    } else {
+      setSidebarCollapsed((collapsed) => !collapsed);
+    }
+  };
 
   const handleGitSubmit = (e) => {
     e.preventDefault();
@@ -100,6 +109,7 @@ export default function App() {
         setActiveTab={setActiveTab}
         hasData={!!data}
         isOpen={sidebarOpen}
+        isCollapsed={sidebarCollapsed}
         onClose={() => setSidebarOpen(false)}
       />
       <div
@@ -112,7 +122,8 @@ export default function App() {
           repoName={data?.repository?.name}
           onUpload={runAnalysis}
           loading={loading}
-          onSidebarToggle={() => setSidebarOpen((open) => !open)}
+          onSidebarToggle={handleSidebarToggle}
+          sidebarCollapsed={sidebarCollapsed}
         />
         <main className="content-pane">
           {renderContent()}
