@@ -12,7 +12,15 @@ import { useAnalysis } from './hooks/useAnalysis';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('overview');
-  const { data, loading, analyzingStep, error, runAnalysis } = useAnalysis();
+  const [gitUrl, setGitUrl] = useState('');
+  const { data, loading, analyzingStep, error, runAnalysis, runGithubAnalysis } = useAnalysis();
+
+  const handleGitSubmit = (e) => {
+    e.preventDefault();
+    if (gitUrl.trim() && runGithubAnalysis) {
+      runGithubAnalysis(gitUrl.trim());
+    }
+  };
 
   const renderContent = () => {
     if (loading) {
@@ -26,12 +34,48 @@ export default function App() {
 
     if (!data) {
       return (
-        <div className="empty-state">
-          <h2>No repository analyzed</h2>
-          <p style={{ marginTop: '8px' }}>
-            Upload a repository folder or a ZIP file using the top header to begin exploration.
+        <div className="empty-state" style={{ maxWidth: '520px', margin: '60px auto', textAlign: 'center' }}>
+          <h2>Explore Any Repository</h2>
+          <p style={{ marginTop: '8px', color: '#94a3b8' }}>
+            Enter a public GitHub link or upload a local folder/ZIP via the top header.
           </p>
-          {error && <p style={{ color: '#ef4444', marginTop: '12px' }}>{error}</p>}
+
+          <form onSubmit={handleGitSubmit} style={{ display: 'flex', gap: '8px', marginTop: '24px' }}>
+            <input
+              type="url"
+              placeholder="https://github.com/akshatt-09/my-portfolio"
+              value={gitUrl}
+              onChange={(e) => setGitUrl(e.target.value)}
+              disabled={loading}
+              style={{
+                flex: 1,
+                padding: '10px 14px',
+                borderRadius: '8px',
+                border: '1px solid #334155',
+                background: '#0f172a',
+                color: '#f8fafc',
+                fontSize: '14px',
+                outline: 'none'
+              }}
+            />
+            <button
+              type="submit"
+              disabled={loading || !gitUrl.trim()}
+              style={{
+                padding: '10px 18px',
+                background: '#0284c7',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '8px',
+                fontWeight: '600',
+                cursor: loading ? 'not-allowed' : 'pointer'
+              }}
+            >
+              Analyze
+            </button>
+          </form>
+
+          {error && <p style={{ color: '#ef4444', marginTop: '16px' }}>{error}</p>}
         </div>
       );
     }

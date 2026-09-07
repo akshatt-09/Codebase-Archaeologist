@@ -34,5 +34,35 @@ export function useAnalysis() {
     }
   };
 
-  return { data, loading, analyzingStep, error, runAnalysis };
+  const runGithubAnalysis = async (url) => {
+    setLoading(true);
+    setError(null);
+    setAnalyzingStep('Cloning repository from GitHub...');
+    try {
+      setAnalyzingStep('Parsing codebase & analyzing git history...');
+      
+      const response = await fetch('/api/analyze-github', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to analyze GitHub repository');
+      }
+
+      setData(result);
+      setAnalyzingStep(null);
+    } catch (err) {
+      setError(err.message || 'Error connecting to backend');
+      setAnalyzingStep(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { data, loading, analyzingStep, error, runAnalysis, runGithubAnalysis };
 }
