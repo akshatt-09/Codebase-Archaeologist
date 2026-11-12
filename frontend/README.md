@@ -1,16 +1,26 @@
-### `frontend/README.md`
-```markdown
 # Frontend Client
 
-React application configured with Vite, Lucide React, and developer-tailored CSS.
+React 18 application configured with Vite and Lucide React.
 
 ## Features
-* Interactive architecture map
-* Local & external dependency separation
-* Real-time file content inspection with highlighted line jumps
-* Code health breakdown table with severity filters
 
-## Build
+- GitHub repository switcher and ZIP/folder upload
+- Repository-wide symbol, path, and source-content search
+- Source preview with selected-line highlighting
+- Interactive module-level and file-level dependency diagrams
+- Code-health breakdown, severity filters, and hypothetical score simulator
+
+## Development
+
 ```bash
 npm install
+npm run dev
+```
+
+The Vite development server proxies `/api` requests to `http://127.0.0.1:5000`.
+
+## Production build
+
+```bash
 npm run build
+```

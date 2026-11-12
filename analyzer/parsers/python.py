@@ -34,12 +34,17 @@ class PythonSourceParser:
                     })
             elif isinstance(node, ast.ImportFrom):
                 module = node.module or ""
-                result["imports"].append({
-                    "name": module,
-                    "symbols": [a.name for a in node.names],
-                    "type": "local" if node.level > 0 or module.startswith(".") else "external",
-                    "line": node.lineno
-                })
+                import_name = ("." * node.level) + module
+                if node.level > 0 and not module:
+                    for alias in node.names:
+                        result["imports"].append({"name": import_name + alias.name, "symbols": [alias.name], "type": "local", "line": node.lineno})
+                else:
+                    result["imports"].append({
+                        "name": import_name,
+                        "symbols": [a.name for a in node.names],
+                        "type": "local" if node.level > 0 or module.startswith(".") else "external",
+                        "line": node.lineno
+                    })
 
             # Classes
             elif isinstance(node, ast.ClassDef):
@@ -78,5 +83,16 @@ class PythonSourceParser:
                 result["complexity"] += 1
             elif isinstance(node, ast.BoolOp):
                 result["complexity"] += len(node.values) - 1
+
+        # Module-level assignments are useful search targets; nested locals are omitted.
+        for statement in tree.body:
+            targets = []
+            if isinstance(statement, ast.Assign):
+                targets = statement.targets
+            elif isinstance(statement, ast.AnnAssign):
+                targets = [statement.target]
+            for target in targets:
+                if isinstance(target, ast.Name):
+                    result["symbols"].append({"name": target.id, "kind": "constant" if target.id.isupper() else "variable", "line": getattr(statement, "lineno", 1)})
 
         return result

@@ -114,12 +114,14 @@ class StaticAnalysisEngine:
             "symbols": all_symbols,
             "dependencies": {
                 "edges": edges,
-                "external": external_deps
+                "external": external_deps,
+                "unresolved": resolver.unresolved_imports,
             },
             "architecture": arch_data,
             "callGraph": call_graph,
             "flows": flows,
             "complexity": complexity_data,
+            "duplication": duplication_data,
             "health": health_data,
             "errors": all_errors
         }

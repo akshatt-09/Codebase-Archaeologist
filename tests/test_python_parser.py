@@ -18,3 +18,13 @@ class Processor:
     assert len(result["functions"]) == 1
     assert result["functions"][0]["name"] == "run"
     assert result["complexity"] >= 2
+
+
+def test_parser_indexes_module_level_variables():
+    from analyzer.parsers.python import PythonSourceParser
+
+    parsed = PythonSourceParser.parse("API_URL = '/api'\ncount: int = 0\ndef run():\n    local = 1\n", "settings.py")
+    indexed = {(symbol["name"], symbol["kind"]) for symbol in parsed["symbols"]}
+    assert ("API_URL", "constant") in indexed
+    assert ("count", "variable") in indexed
+    assert ("local", "variable") not in indexed

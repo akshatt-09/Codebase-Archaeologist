@@ -4,6 +4,7 @@ import { Card } from '../components/common/Card';
 export function Dependencies({ data }) {
   const edges = data?.dependencies?.edges || [];
   const externals = data?.dependencies?.external || [];
+  const unresolved = data?.dependencies?.unresolved || [];
   const [filter, setFilter] = useState('');
 
   const filteredEdges = edges.filter(
@@ -34,6 +35,7 @@ export function Dependencies({ data }) {
                 <th>Source</th>
                 <th>Target</th>
                 <th>Line</th>
+                <th>Import</th>
               </tr>
             </thead>
             <tbody>
@@ -42,6 +44,7 @@ export function Dependencies({ data }) {
                   <td style={{ fontSize: '13px', color: '#94a3b8' }}>{edge.from}</td>
                   <td style={{ fontSize: '13px', color: '#0ea5e9' }}>{edge.to}</td>
                   <td style={{ fontFamily: 'var(--font-mono)' }}>{edge.line || '-'}</td>
+                  <td>{edge.dynamic ? 'Dynamic' : 'Static'}</td>
                 </tr>
               ))}
             </tbody>
@@ -67,6 +70,9 @@ export function Dependencies({ data }) {
           </table>
         </Card>
       </div>
+      <Card title={`Unresolved Local / Aliased Imports (${unresolved.length})`}>
+        {unresolved.length ? <div className="unresolved-import-list">{unresolved.map((item, index) => <div key={`${item.from}:${item.line}:${index}`}><strong>{item.from}:{item.line ?? '—'}</strong><code>{item.specifier}</code><small>{item.reason}</small></div>)}</div> : <p className="search-empty">No unresolved relative or aliased imports were detected.</p>}
+      </Card>
     </div>
   );
 }

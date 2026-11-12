@@ -1,4 +1,6 @@
 class ComplexityAnalyzer:
+    SUPPORTED_LANGUAGES = {"Python", "JavaScript", "JSX", "TypeScript", "TSX", "Java"}
+
     @staticmethod
     def categorize_risk(complexity: int) -> str:
         if complexity > 25:
@@ -9,33 +11,35 @@ class ComplexityAnalyzer:
 
     @classmethod
     def evaluate(cls, files: list[dict]) -> dict:
+        # Exclude unparsed docs/assets from the average so repository size or
+        # non-code file counts cannot dilute the measured complexity signal.
+        eligible = [
+            entry for entry in files
+            if "language" not in entry or entry.get("language") in cls.SUPPORTED_LANGUAGES
+        ]
         total = 0
         distribution = {"low": 0, "medium": 0, "high": 0}
         file_metrics = []
 
-        for f in files:
-            c = f.get("complexity", 1)
-            total += c
-            risk = cls.categorize_risk(c)
+        for entry in eligible:
+            complexity = entry.get("complexity", 1)
+            total += complexity
+            risk = cls.categorize_risk(complexity)
             if risk == "healthy":
                 distribution["low"] += 1
             elif risk == "warning":
                 distribution["medium"] += 1
             else:
                 distribution["high"] += 1
+            file_metrics.append({"file": entry["path"], "complexity": complexity, "risk": risk})
 
-            file_metrics.append({
-                "file": f["path"],
-                "complexity": c,
-                "risk": risk
-            })
-
-        file_metrics.sort(key=lambda x: x["complexity"], reverse=True)
-        avg = round(total / len(files), 2) if files else 0
-
+        file_metrics.sort(key=lambda item: item["complexity"], reverse=True)
+        average = round(total / len(eligible), 2) if eligible else 0
         return {
             "total": total,
-            "average": avg,
+            "average": average,
+            "analyzedFileCount": len(eligible),
+            "excludedFileCount": len(files) - len(eligible),
             "distribution": distribution,
-            "highestComplexityFiles": file_metrics[:10]
+            "highestComplexityFiles": file_metrics[:10],
         }

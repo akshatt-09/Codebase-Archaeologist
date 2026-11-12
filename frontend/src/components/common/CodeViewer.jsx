@@ -4,19 +4,23 @@ import { Code, Copy, Check } from 'lucide-react';
 
 export function CodeViewer({ filePath, initialLine }) {
   const [content, setContent] = useState('');
+  const [startLine, setStartLine] = useState(1);
+  const [totalLines, setTotalLines] = useState(0);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState(null);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (!filePath) return;
+    if (!filePath) { setContent(''); return undefined; }
+    let active = true;
     setLoading(true);
     setErr(null);
-    getFileContent(filePath)
-      .then((res) => setContent(res.content))
-      .catch((e) => setErr(e.message))
-      .finally(() => setLoading(false));
-  }, [filePath]);
+    getFileContent(filePath, initialLine || 1)
+      .then((res) => { if (active) { setContent(res.content); setStartLine(res.startLine || 1); setTotalLines(res.totalLines || 0); } })
+      .catch((e) => { if (active) setErr(e.message); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [filePath, initialLine]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(content);
@@ -54,12 +58,13 @@ export function CodeViewer({ filePath, initialLine }) {
           }}
         >
           {copied ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
-          {copied ? 'Copied' : 'Copy'}
+          {copied ? 'Copied' : 'Copy preview'}
         </button>
       </div>
+      {totalLines > lines.length && <div className="code-window-note">Showing lines {startLine}–{startLine + lines.length - 1} of {totalLines} to keep large-file previews responsive.</div>}
       <div className="code-viewer">
         {lines.map((line, idx) => {
-          const lineNum = idx + 1;
+          const lineNum = startLine + idx;
           const isTarget = lineNum === initialLine;
           return (
             <div

@@ -10,8 +10,9 @@ export async function getSummary() {
   return res.json();
 }
 
-export async function getFileContent(filePath) {
-  const res = await fetch(`/api/file-content?path=${encodeURIComponent(filePath)}`);
+export async function getFileContent(filePath, line = 1, windowSize = 400) {
+  const params = new URLSearchParams({ path: filePath, line: String(line), window: String(windowSize) });
+  const res = await fetch(`/api/file-content?${params.toString()}`);
   if (!res.ok) {
     const err = await res.json();
     throw new Error(err.error || 'Failed to fetch source content');
@@ -28,5 +29,21 @@ export async function analyzeRepository(formData) {
     const err = await res.json();
     throw new Error(err.error || 'Repository analysis failed');
   }
+  return res.json();
+}
+export async function searchRepository(query) {
+  const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || 'Repository search failed');
+  }
+  return res.json();
+}
+
+export async function getHealthHistory(repositoryKey) {
+  const params = new URLSearchParams();
+  if (repositoryKey) params.set('repository', repositoryKey);
+  const res = await fetch(`/api/health-history?${params.toString()}`);
+  if (!res.ok) throw new Error('Unable to load health history');
   return res.json();
 }

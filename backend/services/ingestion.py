@@ -2,7 +2,6 @@ import os
 import zipfile
 import shutil
 import tempfile
-from werkzeug.utils import secure_filename
 
 DEFAULT_IGNORED_DIRS = {
     '.git', 'node_modules', 'dist', 'build', '.venv', 'venv', 
@@ -11,6 +10,8 @@ DEFAULT_IGNORED_DIRS = {
 
 MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024  # 5MB per file
 MAX_TOTAL_EXTRACT_BYTES = 100 * 1024 * 1024  # 100MB repository limit
+MAX_DISCOVERED_FILES = 20000
+MAX_DISCOVERED_BYTES = 100 * 1024 * 1024
 
 def is_binary_file(filepath: str) -> bool:
     """Detect if a file contains null bytes within its first 1024 bytes."""
@@ -53,6 +54,7 @@ def discover_repository_files(base_dir: str, ignored_dirs: set = None) -> list[d
         ignored_dirs = DEFAULT_IGNORED_DIRS
 
     discovered = []
+    total_bytes = 0
     base_abs = os.path.abspath(base_dir)
 
     for root, dirs, files in os.walk(base_dir, topdown=True):
@@ -70,7 +72,12 @@ def discover_repository_files(base_dir: str, ignored_dirs: set = None) -> list[d
                 st = os.stat(full_path)
                 if st.st_size > MAX_FILE_SIZE_BYTES or is_binary_file(full_path):
                     continue
-                
+                if len(discovered) >= MAX_DISCOVERED_FILES:
+                    raise ValueError(f"Repository contains more than {MAX_DISCOVERED_FILES} analyzable files")
+                total_bytes += st.st_size
+                if total_bytes > MAX_DISCOVERED_BYTES:
+                    raise ValueError("Analyzable repository source exceeds the 100MB limit")
+
                 discovered.append({
                     "path": rel_path,
                     "absolute_path": full_path,

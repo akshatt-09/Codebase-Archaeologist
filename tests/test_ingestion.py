@@ -21,3 +21,13 @@ def test_file_discovery_ignores(tmp_path):
     paths = [d["path"] for d in discovered]
     assert "src/index.js" in paths
     assert "node_modules/pkg.js" not in paths
+
+
+def test_discovery_enforces_analyzable_file_limit(tmp_path, monkeypatch):
+    import backend.services.ingestion as ingestion
+
+    (tmp_path / "one.py").write_text("print('one')")
+    (tmp_path / "two.py").write_text("print('two')")
+    monkeypatch.setattr(ingestion, "MAX_DISCOVERED_FILES", 1)
+    with pytest.raises(ValueError, match="more than 1"):
+        discover_repository_files(str(tmp_path))

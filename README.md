@@ -11,12 +11,13 @@ Instead of manually opening dozens of files, developers can provide a **public G
 - 🔗 Analyze public GitHub repositories
 - 📦 Upload a repository as a ZIP archive
 - 📁 Upload a local project folder
-- 🏗️ Explore repository architecture and module structure
-- 🔗 Inspect dependency relationships
+- 🔁 Switch between GitHub repositories without losing the last successful analysis on a failed switch
+- 🏗️ Explore module-level and file-level dependency diagrams with detected cycles
+- 🔗 Inspect resolved, external, and unresolved dependency relationships
 - 🔄 Explore feature and code flows
 - 📜 Review Git history and repository activity
-- ❤️ Inspect code-health and complexity metrics
-- 🔎 Search analyzed files and inspect source code
+- ❤️ Inspect a size-neutral code-health score, findings, and a transparent score simulator
+- 🔎 Search symbols, file paths, and actual source-code lines, then inspect matching source locations
 - 📊 Present analysis through a developer-focused dashboard
 
 ## 🧩 How It Works
@@ -89,8 +90,9 @@ cd Codebase-Archaeologist
 
 ### 2. Start the backend
 
+Run these commands from the project root:
+
 ```bash
-cd backend
 python -m venv .venv
 ```
 
@@ -106,16 +108,11 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-Install dependencies:
+Install dependencies and start Flask:
 
 ```bash
-pip install -r requirements.txt
-```
-
-Start Flask:
-
-```bash
-python app.py
+pip install -r backend/requirements.txt
+python -m backend.app
 ```
 
 Backend runs at:
@@ -145,6 +142,8 @@ Vite will display the local development URL in the terminal.
 | `/api/analyze` | POST | Analyze an uploaded ZIP or folder |
 | `/api/analyze-github` | POST | Clone and analyze a public GitHub repository |
 | `/api/file-content` | GET | Retrieve source code from an analyzed file |
+| `/api/search?q=term` | GET | Search active-repository symbols, file paths, and source lines |
+| `/api/health-history` | GET | Retrieve score snapshots retained for the active repository during this backend session |
 
 ## 🌐 Live Demo
 
@@ -182,16 +181,18 @@ Planned improvements include:
 
 This is an actively developed project. The current version is intended as a working developer-tool prototype and has limitations such as:
 
-- GitHub analysis currently targets public HTTPS GitHub repositories
-- Analysis state is currently maintained by the running backend service
-- Very large repositories may require additional performance and resource optimizations
-- Some analysis capabilities are still being expanded
+- GitHub analysis targets HTTPS GitHub repositories; private repositories need Git credentials available to the backend process
+- Analysis state is maintained in memory by the running backend service
+- Symbol discovery and dependency resolution are static-analysis approximations, not a full compiler/runtime model
+- Test coverage remains unavailable unless a coverage source is integrated
+- Repository analysis currently limits analyzable source to 20,000 files and 100MB total; individual files over 5MB are skipped
+- Static symbol and dependency analysis is best-effort and may not resolve every language alias or runtime-loaded module
 
 ## 📌 Project Status
 
 **Status: Active Development 🚧**
 
-The core application, repository ingestion, backend analysis APIs, and deployed dashboard are working. Additional analysis depth and developer-facing features are being added incrementally.
+Repository switching, in-repository code search, the code-health score model and simulator, and interactive architecture exploration are implemented in this local development version. Verify the application locally before deploying any changes.
 
 ## 👨‍💻 Author
 
